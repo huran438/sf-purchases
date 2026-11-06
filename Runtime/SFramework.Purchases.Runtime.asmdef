@@ -1,0 +1,20 @@
+{
+    "name": "SFramework.Purchases.Runtime",
+    "rootNamespace": "SFramework.Purchases.Runtime",
+    "references": [
+        "SFramework.Core.Runtime",
+        "SFramework.Configs.Runtime",
+        "UniTask"
+    ],
+    "includePlatforms": [],
+    "excludePlatforms": [],
+    "allowUnsafeCode": false,
+    "overrideReferences": true,
+    "precompiledReferences": [
+        "Newtonsoft.Json.dll"
+    ],
+    "autoReferenced": true,
+    "defineConstraints": [],
+    "versionDefines": [],
+    "noEngineReferences": false
+}

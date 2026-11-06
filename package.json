@@ -1,0 +1,13 @@
+﻿{
+  "author": "Secret Place Studio",
+  "name": "sp.sframework.purchases",
+  "displayName": "SF Purchases",
+  "version": "1.0.0",
+  "description": "",
+  "keywords": [
+    "purchases",
+    "sframework"
+  ],
+  "category": "SFramework",
+  "type": "library"
+}
