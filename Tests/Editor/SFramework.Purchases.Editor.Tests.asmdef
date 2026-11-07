@@ -1,0 +1,9 @@
+{
+    "name": "SFramework.Purchases.Editor.Tests",
+    "rootNamespace": "SFramework.Purchases.Editor.Tests",
+    "references": ["SFramework.Purchases.Runtime", "SFramework.Configs.Runtime", "SFramework.Core.Runtime", "UniTask"],
+    "includePlatforms": ["Editor"],
+    "autoReferenced": false,
+    "defineConstraints": ["UNITY_INCLUDE_TESTS"],
+    "optionalUnityReferences": ["TestAssemblies"]
+}

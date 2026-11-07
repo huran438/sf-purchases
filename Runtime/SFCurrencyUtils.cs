@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Concurrent;
 using System.Collections.Generic;
 using System.Globalization;
 
@@ -7,7 +8,7 @@ namespace SFramework.Purchases.Runtime
     public static class SFCurrencyUtils
     {
         // Cache results to avoid repeated culture scans.
-        private static readonly Dictionary<string, string> _cache = new(StringComparer.OrdinalIgnoreCase);
+        private static readonly ConcurrentDictionary<string, string> _cache = new(StringComparer.OrdinalIgnoreCase);
 
         // Fallbacks for common currencies (extend as needed).
         private static readonly Dictionary<string, string> _fallback =
@@ -71,9 +72,6 @@ namespace SFramework.Purchases.Runtime
             if (string.IsNullOrWhiteSpace(currencyCode))
                 return string.Empty;
 
-            if (_cache.TryGetValue(currencyCode, out var cached))
-                return cached;
-
             // 1) Optional: try user's current culture (can differ by locale)
             if (preferLocalized)
             {
@@ -82,11 +80,16 @@ namespace SFramework.Purchases.Runtime
                     var current = CultureInfo.CurrentCulture;
                     var region = new RegionInfo(current.Name);
                     if (string.Equals(region.ISOCurrencySymbol, currencyCode, StringComparison.OrdinalIgnoreCase))
-                        return _cache[currencyCode] = region.CurrencySymbol;
+                        return current.NumberFormat.CurrencySymbol;
                 }
-                catch { /* some cultures have neutral names without region */ }
+                catch (ArgumentException) { /* some cultures have neutral names without region */ }
             }
 
+            return _cache.GetOrAdd(currencyCode, FindFallbackSymbol);
+        }
+
+        private static string FindFallbackSymbol(string currencyCode)
+        {
             // 2) Scan all specific cultures to find a matching region.
             try
             {
@@ -96,7 +99,7 @@ namespace SFramework.Purchases.Runtime
                     {
                         var region = new RegionInfo(culture.Name);
                         if (string.Equals(region.ISOCurrencySymbol, currencyCode, StringComparison.OrdinalIgnoreCase))
-                            return _cache[currencyCode] = region.CurrencySymbol;
+                            return region.CurrencySymbol;
                     }
                     catch { /* ignore invalid/neutral cultures */ }
                 }
@@ -108,10 +111,10 @@ namespace SFramework.Purchases.Runtime
 
             // 3) Fallback map (stable across platforms).
             if (_fallback.TryGetValue(currencyCode, out var symbol))
-                return _cache[currencyCode] = symbol;
+                return symbol;
 
             // 4) Last resort: return the code itself.
-            return _cache[currencyCode] = currencyCode.ToUpperInvariant();
+            return currencyCode.ToUpperInvariant();
         }
     }
 }
